@@ -1,0 +1,38 @@
+image: python:2.7
+
+before_script:
+    - apt-get update
+    - apt-get install -y perl curl python-pip
+    - pip install -r requirements.txt
+    - curl -L https://cpanmin.us | perl - App::cpanminus
+    - cpanm --installdeps .
+
+rabdomyzer_match:
+    script:
+        - perl rabdomyzer-match.pl -l data/test.db_gene.rabdomyzer -q data/rabdomyzer.test.candidate -o data -R -H
+        - cmp --silent data/expected_output/rabdomyzer.db_gene.rabdomyzer data/rabdomyzer.db_gene.rabdomyzer || exit 2
+
+rabdomyzer_filtration:
+    script:
+        - perl rabdomyzer-filtration.pl -o trio -i data/rabdomyzer.test.VEP.vcf -m data/trio.test.model -gene data/rabdomyzer.test.candidate -db data/test.db_gene.rabdomyzer
+        - diff data/expected_output/BOEX_CL004.trio.0.01.rabdomyzer.comhet_calls.txt trio/BOEX_CL004.trio.0.01.rabdomyzer.comhet_calls.txt || exit 2
+        - diff data/expected_output/BOEX_CL004.trio.0.01.rabdomyzer.het_calls.txt trio/BOEX_CL004.trio.0.01.rabdomyzer.het_calls.txt || exit 2
+        - diff data/expected_output/BOEX_CL004.trio.0.01.rabdomyzer.hom_calls.txt trio/BOEX_CL004.trio.0.01.rabdomyzer.hom_calls.txt || exit 2
+        
+rabdomyzer_excel:
+    script:
+        - perl rabdomyzer-filtration.pl -o trio -i data/rabdomyzer.test.VEP.vcf -m data/trio.test.model -gene data/rabdomyzer.test.candidate -db data/test.db_gene.rabdomyzer
+        - python rabdomyzer-excel.py --comhet trio/BOEX_CL004.trio.0.01.rabdomyzer.comhet_calls.txt --het trio/BOEX_CL004.trio.0.01.rabdomyzer.het_calls.txt --hom trio/BOEX_CL004.trio.0.01.rabdomyzer.hom_calls.txt --output trio/BOEX_CL004.trio.0.01.rabdomyzer.xlsx
+        #- md5sum data/expected_output/BOEX_CL004.trio.0.01.rabdomyzer.xlsx trio/BOEX_CL004.trio.0.01.rabdomyzer.xlsx || exit 2
+        
+# 
+#pipeline:
+#    script: 
+#        - ./pipeline_rabdomyzer.sh data/rabdomyzer.test.config 
+
+#idempotency:
+#    script: 
+#        - ./pipeline_rabdomyzer.sh data/rabdomyzer.test.config
+#        - test output
+#        - ./pipeline_rabdomyzer.sh data/rabdomyzer.test.config
+#        - test output
