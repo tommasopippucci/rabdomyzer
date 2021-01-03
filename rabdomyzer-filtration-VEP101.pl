@@ -180,6 +180,8 @@ while (<DBGENE>)
 shift @gene_header; 
                                                                                        
                                                                      # print Dumper($db_gene{MTOR})."\n\n\n";
+                                                                     
+                                            # Retrieving information from MODEL file
 
 open MODEL, "$model_file" or die $!;
 
@@ -251,8 +253,8 @@ while (<MODEL>)
     {
     print "\n";
     }
- }                                                                                       # Closing loop on MODEL file
-
+ }
+ 
 print "Starting variant analysis...\n\n";
 print "Performing consequence-based variant selection... \n\n";
 
@@ -262,12 +264,13 @@ while (<VCF>)
  {
  chomp;s/\r//;
                                             # Retrieving information from header lines
- if ($_  =~ /^\#/)                                                                       # Opening the "if" condition to parse the header vcf section
+ if ($_  =~ /^\#/)
     {
-     if ($_  =~ /^\#\#INFO=<ID=ANN/)                                                      # Exploring the functional annotation terms contained in the VCF header
+     if ($_  =~ /^\#\#INFO=<ID=ANN/)
        {
-       $ann_string=substr($_, 99, -2);                                                   # Taking substring containing annotations separated by " | ". Substring positions may change with changing annotation. Must be checked every time annotation features change
-       @ann=split("\\|", $ann_string);                                                   # Creating the array containing annotation terms
+       $ann_string=substr($_, 99, -2);
+                                            # Taking substring containing annotations separated by " | ". Substring positions may change with changing annotation. Must be checked every time annotation features change
+       @ann=split("\\|", $ann_string);
        @ann=@ann[3,1,2,10,11,12,13,14,15,16,8,9,24,27,7,4,5,6,28,35,55,56,77,78,66,65,72,33,34,80,69,79,82,83,84,17,32,57,73,74,75,76,58,59,60,85,18,19,20,21,22,23,0,37];
        print "The following ".scalar @ann." variant-based annotation features are reported: Gene/Variant Number";
        for $i (0..$#ann)
