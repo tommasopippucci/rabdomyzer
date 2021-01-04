@@ -102,6 +102,8 @@ while (<ONTO>)
  my $onto{$_}++;
  }
  
+ close ONTO;
+ 
                                              # Checking/creating output folder
 
 print "Checking output folder...\n\n";
