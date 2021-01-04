@@ -79,18 +79,12 @@ my(@line) = (); my(@info) = (); my(@ann_var) = (); my(@ann) = (); my(@coord) = (
 my(@geno_var) = (); my(@iso) = (); my(@ctrl_ids) = (); my(@case_ids) = (); my(@unkn_ids) = ();
 my(@ctrl_col) = (); my(@case_col) = (); my(@unkn_col) = (); my(@gene) = (); my(@format) = ();
 my(@uniq_gene) = (); my(@uniq_inds_x_gene) = (); my(@ind_ids) = (); my(@fath_var_index) = (); my(@moth_var_index) = ();
-my(@multi_csq) = (); my(@gene_header) = ();
+my(@multi_csq) = (); my(@gene_header) = (); my(@fields) = ();
 
                                             #Declaring/creating % variables
                                             
-my(%iso_var) = ();
-my(%gene_var) = ();
-my(%inds_x_gene) = ();
-my(%var_count) = ();
-my(%gene_count) = ();
-my(%gene_rep) = ();
-my(%all_count) = ();
-my(%db_gene) = ();
+my(%iso_var) = (); my(%gene_var) = (); my(%inds_x_gene) = (); my(%var_count) = (); my(%gene_count) = ();
+my(%gene_rep) = (); my(%all_count) = (); my(%db_gene) = (); my(%onto) = ();
 
 open ONTO, "$onto_file" or die $!;
 
@@ -99,7 +93,7 @@ while (<ONTO>)
  next if ($_  =~ /^\#/);
  chomp;
  s/\r//;
- my $onto{$_}++;
+ $onto{$_}++;
  }
  
  close ONTO;
